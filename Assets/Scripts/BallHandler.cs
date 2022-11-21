@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class BallHandler : MonoBehaviour
 {
+    [SerializeField] Rigidbody2D currentBallRigidbody;
 
     Camera mainCamera;
 
@@ -16,14 +17,18 @@ public class BallHandler : MonoBehaviour
     void Update()
     {
         //Mira si se esta tocando o no la pantalla. Si no se toca, mejor no hacer nada.
-        if (!Touchscreen.current.primaryTouch.press.isPressed) { return; }
-
+        if (!Touchscreen.current.primaryTouch.press.isPressed) 
+        { 
+            currentBallRigidbody.isKinematic = false;
+            return;
+        }
+        currentBallRigidbody.isKinematic = true;
         //Leer la pos del touch y guardarla
         Vector2 touchPosition = Touchscreen.current.primaryTouch.position.ReadValue();  
 
         //Transformar de ScreenSpace to WorldSpace
         Vector3 worldPosition = mainCamera.ScreenToWorldPoint(touchPosition);
 
-        Debug.Log(worldPosition);
+        currentBallRigidbody.position = worldPosition;
     }
 }
