@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 public class BallHandler : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class BallHandler : MonoBehaviour
     Camera mainCamera;
     Rigidbody2D currentBallRigidbody;
     SpringJoint2D currentBallSpringJoint;
+    public int cantTouch;
 
     bool isDragging;
     private void Awake() 
@@ -32,8 +35,10 @@ public class BallHandler : MonoBehaviour
     }
     void Update()
     {
-        //Mira si se esta tocando o no la pantalla. Si no se toca, mejor no hacer nada.
-        if (!Touchscreen.current.primaryTouch.press.isPressed) 
+        if (currentBallRigidbody == null) {return;}
+         cantTouch = Touch.activeTouches.Count;
+        //Mira  cuantos touch se estan haciendo. Si no hay ninguno, mejor no hacer nada.
+        if (Touch.activeTouches.Count == 0) 
         { 
             if(isDragging)
             {
@@ -41,17 +46,37 @@ public class BallHandler : MonoBehaviour
             }
             isDragging = false;
             return;
+            
         }
+
+        //cacular la posicion media entre varios touches
+        Vector2 touchPosition = new Vector2();
+      
+        foreach(Touch touch in Touch.activeTouches)
+        {
+          
+                touchPosition +=touch.screenPosition;
+             
+            
+        }
+        touchPosition/= Touch.activeTouches.Count;
+        
 
         isDragging = true;
         currentBallRigidbody.isKinematic = true;
-        //Leer la pos del touch y guardarla
-        Vector2 touchPosition = Touchscreen.current.primaryTouch.position.ReadValue();  
 
         //Transformar de ScreenSpace to WorldSpace
         Vector3 worldPosition = mainCamera.ScreenToWorldPoint(touchPosition);
-
         currentBallRigidbody.position = worldPosition;
+    }
+
+    void OnEnable() 
+    {
+        EnhancedTouchSupport.Enable();
+    }
+    void OnDisable() 
+    {
+        EnhancedTouchSupport.Disable();
     }
     void LaunchBall()
     {

@@ -528,7 +528,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 9.008152
+  orthographic size: 6.328125
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1321,6 +1321,7 @@ MonoBehaviour:
   pivot: {fileID: 670522484}
   detachBallDelay: 0.1
   respawnDelay: 2
+  cantTouch: 0
 --- !u!4 &1404024402
 Transform:
   m_ObjectHideFlags: 0
