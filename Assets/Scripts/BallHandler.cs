@@ -6,6 +6,13 @@ using UnityEngine.InputSystem;
 public class BallHandler : MonoBehaviour
 {
 
+    Camera mainCamera;
+
+    void Start() 
+    {
+        mainCamera = Camera.main;
+        
+    }
     void Update()
     {
         //Mira si se esta tocando o no la pantalla. Si no se toca, mejor no hacer nada.
@@ -13,6 +20,10 @@ public class BallHandler : MonoBehaviour
 
         //Leer la pos del touch y guardarla
         Vector2 touchPosition = Touchscreen.current.primaryTouch.position.ReadValue();  
-        Debug.Log(touchPosition);
+
+        //Transformar de ScreenSpace to WorldSpace
+        Vector3 worldPosition = mainCamera.ScreenToWorldPoint(touchPosition);
+
+        Debug.Log(worldPosition);
     }
 }
