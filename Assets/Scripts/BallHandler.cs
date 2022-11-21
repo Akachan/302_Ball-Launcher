@@ -6,17 +6,27 @@ using UnityEngine.InputSystem;
 public class BallHandler : MonoBehaviour
 {
    
-    [SerializeField] Rigidbody2D currentBallRigidbody;
-    [SerializeField] SpringJoint2D currentBallSpringJoint;
+    [SerializeField] GameObject ballPrefab;
+    [SerializeField] Rigidbody2D pivot;
     [SerializeField] float detachBallDelay = 0.1f;
+    [SerializeField] float respawnDelay = 2f;
 
     Camera mainCamera;
+    Rigidbody2D currentBallRigidbody;
+    SpringJoint2D currentBallSpringJoint;
 
-     bool isDragging;
+    bool isDragging;
+    private void Awake() 
+    {
+        currentBallRigidbody = ballPrefab.GetComponent<Rigidbody2D>();
+        currentBallSpringJoint = ballPrefab.GetComponent<SpringJoint2D>();
+        
+    }
 
     void Start() 
     {
         mainCamera = Camera.main;
+        SpawnNewBall();
         
         
     }
@@ -59,5 +69,18 @@ public class BallHandler : MonoBehaviour
         //rompo la cuerda y  elimino el elemento de la variable
         currentBallSpringJoint.enabled = false;
         currentBallSpringJoint = null;
+
+        Invoke(nameof(SpawnNewBall), respawnDelay);
+    }
+
+    void SpawnNewBall()
+    {
+        //creo el objeto
+        GameObject ballInstance = Instantiate(ballPrefab, pivot.position, Quaternion.identity);
+        //guardo sus características
+        currentBallRigidbody = ballInstance.GetComponent<Rigidbody2D>();
+        currentBallSpringJoint = ballInstance.GetComponent<SpringJoint2D>();
+        //conecto la bola nueva con el pivote
+        currentBallSpringJoint.connectedBody = pivot;
     }
 }
